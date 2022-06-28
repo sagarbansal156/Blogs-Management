@@ -30,6 +30,7 @@ const createAuthor = async function (req, res) {
         let authorCreated = await authorModel.create(author)
         res.status(201).send({
             status: true,
+            msg:"New author created successfully",
             data: authorCreated
         })
 
@@ -40,26 +41,28 @@ const createAuthor = async function (req, res) {
 };
 
 const loginAuthor = async function (req, res) {
-    try{
-    let userName = req.body.email
-    let password = req.body.password
-    let author = await authorModel.findOne({ email: userName, password: password })
-    if (!author) {
-        res.status(400).send({ status: false, msg: "username or the password is not corerct" })
+    try {
+        let userName = req.body.email
+        let password = req.body.password
+        let author = await authorModel.findOne({ email: userName, password: password })
+        if (!author) {
+            res.status(400).send({ status: false, msg: "username or the password is not corerct" })
+        }
+        else {
+            let token = jwt.sign({
+                authorId: author._id.toString(),
+                iat: Math.floor(new Date() / 1000),
+                exp: Math.floor(new Date() / 1000) + 10 * 60 * 60
+            }, "msTeamRoom-10")
+            res.setHeader("x-api-key", token);
+            res.status(200).send({ status: true, 
+                msg:" Token created successfully",
+                token: token })
+        }
+    } catch (error) {
+        res.status(500).send({ msg: error.message })
+
     }
-    else {
-        let token = jwt.sign({
-            authorId: author._id.toString(),
-            batch: "radon",
-            organisation: "FunctionUp"
-        }, "msTeamRoom-10")
-        res.setHeader("x-api-key", token);
-        res.status(200).send({ status: true, token: token })
-    }
-}catch (error) {
-    res.status(500).send({ msg: error.message })
-  
-  }
 }
 
 module.exports.createAuthor = createAuthor;

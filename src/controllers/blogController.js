@@ -31,6 +31,7 @@ const createBlog = async function (req, res) {
       let blogCreated = await blogModel.create(blog)
       res.status(201).send({
         status: true,
+        msg:"New Blog created successfully",
         data: blogCreated
       })
     }
@@ -127,7 +128,7 @@ const deleteBlogByQuery = async function (req, res) {
     let isPublishedData = data.isPublished
     const tagsData = data.tags
     const subcategoryData = data.subcategory
-    if (object.keys(data).length == 0) {
+    if (data.keys().length == 0) {
       res.status(400).send({ status: false, msg: "Data can't be empty" });
       if (isPublishedData || isPublishedData == "") {
         if (isPublishedData == "false") {
@@ -170,11 +171,8 @@ const deleteBlogByQuery = async function (req, res) {
 
 
 
-module.exports.createBlog = createBlog;
-module.exports.getBlogs = getBlogs;
-module.exports.updateBlog = updateBlog;
-module.exports.deleteBlogByPath = deleteBlogByPath;
-module.exports.deleteBlogByQuery = deleteBlogByQuery;
+module.exports = {createBlog, getBlogs, updateBlog, deleteBlogByPath,
+ deleteBlogByQuery}
 
 
 
